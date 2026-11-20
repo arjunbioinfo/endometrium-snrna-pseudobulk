@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test-and-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Offline unit tests
+        run: pytest -v
+
+      - name: Cache public dataset and prior-knowledge networks
+        uses: actions/cache@v4
+        with:
+          path: data
+          key: data-${{ hashFiles('config/config.yaml') }}
+
+      - name: Run the full workflow on the public dataset
+        run: snakemake --cores 2
+
+      - name: Check outputs
+        run: |
+          test -s results/pseudobulk_de.csv
+          test -s results/deg_summary.csv
+          test -s figures/fig1_umap_composition.png
+          test -s figures/fig2_pseudobulk_de.png
+          test -s results/tf_activity.csv
+          test -s results/pathway_activity.csv
+          test -s results/lodo_summary.csv
+          test -s figures/fig3_tf_pathway_activity.png
+          test -s figures/fig4_leave_one_donor_out.png
+
+      - name: Upload results and figures
+        uses: actions/upload-artifact@v4
+        with:
+          name: endometrium-snrna-outputs
+          path: |
+            results/*.csv
+            results/*.json
+            figures/
