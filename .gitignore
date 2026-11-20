@@ -1,0 +1,16 @@
+# Python & Snakemake
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.snakemake/
+
+# Downloaded data and references (re-created by the workflow)
+data/
+
+# Run outputs (figures in figures/ are committed as examples)
+results/
+
+# OS & editors
+.DS_Store
+.vscode/
+.idea/

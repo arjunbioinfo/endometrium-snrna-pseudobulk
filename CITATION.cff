@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this workflow, please cite it as below, and cite the original dataset (Huang et al., JCI Insight 2026)."
+type: software
+title: "endometrium-snrna-pseudobulk: donor-level pseudobulk snRNA-seq workflow for human endometrium"
+version: 0.1.0
+date-released: 2026-11-20
+license: MIT
+url: "https://arjunbioinfo.github.io/"
+repository-code: "https://github.com/arjunbioinfo/endometrium-snrna-pseudobulk"
+authors:
+  - family-names: "Thippana"
+    given-names: "Mallikarjuna"
+    affiliation: "Department of Oncology-Pathology, Karolinska Institutet"
+    orcid: "https://orcid.org/0000-0001-8485-8626"
+keywords:
+  - snRNA-seq
+  - endometrium
+  - pseudobulk
+  - PyDESeq2
+  - Snakemake
+  - transcription factor activity
+  - decoupler
+  - PROGENy
+  - reproducible research
+references:
+  - type: article
+    title: "Programmed cycle-induced endometrial perturbations do not independently influence angiogenic imbalance or hypertensive disorders in pregnancy"
+    authors:
+      - family-names: "Huang"
+        given-names: "David"
+    journal: "JCI Insight"
+    year: 2026
+    doi: "10.1172/jci.insight.202443"
