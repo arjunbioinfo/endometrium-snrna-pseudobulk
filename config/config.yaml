@@ -1,0 +1,44 @@
+# Public endometrium snRNA-seq: programmed (hormone-replacement) vs natural cycle, window of implantation
+# Huang et al., JCI Insight 2026 (doi:10.1172/jci.insight.202443); CC BY 4.0 via CZ CELLxGENE Discover
+seed: 42
+threads: 2
+
+dataset:
+  url: "https://datasets.cellxgene.cziscience.com/cf7d5037-4cda-42ef-8375-19f1f3f9deea.h5ad"
+  h5ad_path: "data/huang2026_endometrium_snrna.h5ad"
+  citation: "Huang D et al. JCI Insight 2026. doi:10.1172/jci.insight.202443"
+  license: "CC BY 4.0 (CZ CELLxGENE Discover)"
+  symbol_column: "feature_name"
+  donor_column: "donor_id"
+  condition_column: "CycleType"
+  celltype_column: "cell_type"      # author annotation
+  test_level: "Controlled"          # programmed (hormone-replacement) cycle
+  reference_level: "Natural"
+
+qc:
+  min_genes: 300
+  max_pct_mt: 5.0
+  nuclei_per_donor_for_umap: 600   # donor-balanced subsample, visualisation only
+  n_top_genes: 2000
+  n_pcs: 30
+  n_neighbors: 15
+
+pseudobulk:
+  min_cells_per_sample: 20         # nuclei per donor x cell type
+  min_donors_per_group: 4
+  min_gene_count: 10
+  padj_threshold: 0.05
+  lfc_threshold: 0.5
+
+activity:
+  reference_dir: "data/reference"  # CollecTRI and PROGENy are downloaded once from OmniPath and cached
+  min_targets: 5
+  progeny_top: 500
+  n_top_tfs: 25
+
+robustness:
+  min_degs: 100                    # leave-one-donor-out only for cell types with >= this many DEGs
+
+outputs:
+  results_dir: "results"
+  figures_dir: "figures"
