@@ -1,0 +1,78 @@
+configfile: "config/config.yaml"
+
+RESULTS = config["outputs"]["results_dir"]
+FIGURES = config["outputs"]["figures_dir"]
+
+
+rule all:
+    input:
+        f"{RESULTS}/qc_summary.csv",
+        f"{RESULTS}/composition_stats.csv",
+        f"{RESULTS}/pseudobulk_de.csv",
+        f"{RESULTS}/deg_summary.csv",
+        f"{FIGURES}/fig1_umap_composition.png",
+        f"{FIGURES}/fig2_pseudobulk_de.png",
+        f"{RESULTS}/tf_activity.csv",
+        f"{RESULTS}/pathway_activity.csv",
+        f"{RESULTS}/lodo_summary.csv",
+        f"{FIGURES}/fig3_tf_pathway_activity.png",
+        f"{FIGURES}/fig4_leave_one_donor_out.png",
+
+
+rule download_qc_pseudobulk:
+    output:
+        qc=f"{RESULTS}/qc_summary.csv",
+        props=f"{RESULTS}/celltype_proportions.csv",
+        comp_stats=f"{RESULTS}/composition_stats.csv",
+        pb_counts=f"{RESULTS}/pseudobulk_counts.csv.gz",
+        pb_meta=f"{RESULTS}/pseudobulk_samples.csv",
+        manifest=f"{RESULTS}/dataset_manifest.json",
+        fig1=f"{FIGURES}/fig1_umap_composition.png",
+    params:
+        cfg=config,
+    threads: workflow.cores
+    script:
+        "scripts/01_download_qc_pseudobulk.py"
+
+
+rule pseudobulk_de:
+    input:
+        pb_counts=f"{RESULTS}/pseudobulk_counts.csv.gz",
+        pb_meta=f"{RESULTS}/pseudobulk_samples.csv",
+    output:
+        de=f"{RESULTS}/pseudobulk_de.csv",
+        summary=f"{RESULTS}/deg_summary.csv",
+        fig2=f"{FIGURES}/fig2_pseudobulk_de.png",
+    params:
+        cfg=config,
+    script:
+        "scripts/02_pseudobulk_de.py"
+
+
+rule tf_pathway_activity:
+    input:
+        de=f"{RESULTS}/pseudobulk_de.csv",
+    output:
+        tf=f"{RESULTS}/tf_activity.csv",
+        pathways=f"{RESULTS}/pathway_activity.csv",
+        fig3=f"{FIGURES}/fig3_tf_pathway_activity.png",
+    params:
+        cfg=config,
+    script:
+        "scripts/03_tf_pathway_activity.py"
+
+
+rule leave_one_donor_out:
+    input:
+        pb_counts=f"{RESULTS}/pseudobulk_counts.csv.gz",
+        pb_meta=f"{RESULTS}/pseudobulk_samples.csv",
+        de=f"{RESULTS}/pseudobulk_de.csv",
+    output:
+        genes=f"{RESULTS}/lodo_gene_retention.csv",
+        summary=f"{RESULTS}/lodo_summary.csv",
+        fig4=f"{FIGURES}/fig4_leave_one_donor_out.png",
+    params:
+        cfg=config,
+    threads: workflow.cores
+    script:
+        "scripts/04_leave_one_donor_out.py"
